@@ -3,6 +3,9 @@ name = "steady"
 version = "0.1.0"
 dependencies = [
     "numpy",
+    "pandas",
+    "xarray",
+    "cartopy",
     "scipy",
     "matplotlib",
     "pytest"
