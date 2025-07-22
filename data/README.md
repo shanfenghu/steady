@@ -15,7 +15,7 @@ The experiment uses the monthly gridded Argo product from the Copernicus Marine 
 
 4.  **Download Settings:** When downloading the data, you must specify the following settings to obtain the correct subset and a manageable file size:
 
-    * **Date Range:** Select the time period from `2000-01-01` to the latest available date (e.g., `2024-06-01`).
+    * **Date Range:** Select the time period from `1980-01-01` to the latest available date (e.g., `2024-06-01`).
 
     * **Geographical Area:** Specify the North Atlantic bounding box:
 
