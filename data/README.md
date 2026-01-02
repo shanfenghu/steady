@@ -1,4 +1,4 @@
-# Data for the STEADY Paper Experiments
+# Data Directory
 
 This directory is intended to hold the data files required to run the real-world case study in `experiments/exp_argo.py`.
 

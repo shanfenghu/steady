@@ -1,10 +1,16 @@
 # STEADY: Stein-type Estimator Assisted by Dynamics
 
-This repository contains the official, fully **anonymised** Python implementation and the experimental code for the KDD 2026 manuscript submission (ID: 87).
+This repository contains the official Python implementation and experimental code for the paper:
+
+**Stein-type Estimator Assisted by Dynamics**  
+*Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '26), August 09--13, 2026, Jeju Island, Republic of Korea*
+
+**DOI:** [10.1145/3770854.3780166](https://doi.org/10.1145/3770854.3780166)  
+**Source Code:** [https://github.com/shanfenghu/steady](https://github.com/shanfenghu/steady)
 
 ## Abstract
 
-Estimating the equilibrium parameters of environmental systems is a fundamental task, yet it is often hampered by sparse and noisy sensor data. While the standard Maximum Likelihood Estimator (MLE) is intuitive, Stein's paradox famously shows that it is statistically inefficient in high dimensions. To address this, we introduce STEADY, an estimator that generalises Stein's paradox by integrating physical knowledge. We derive our estimator from a principled empirical Bayes model where the prior distribution over the equilibria is a direct consequence of the stationary properties of the system's governing differential equations. This leads to a novel adaptive shrinkage mechanism, where the amount of shrinkage applied to each observation is naturally modulated by the physical stability of the system it measures. We provide a rigorous frequentist analysis of our estimator, proving that STEADY not only dominates the MLE but is also minimax under certain conditions, offering the strongest possible guarantee of robustness. We validate our claims on synthetic data and demonstrate STEADY's utility on the global Argo ocean float dataset, showing that it effectively filters noise to reveal the "North Atlantic Warming Hole". Code is available at https://anonymous.4open.science/r/steady-kdd-submission_id-87
+Estimating the equilibrium parameters of environmental systems is a fundamental task, yet it is often hampered by sparse and noisy sensor data. While the standard Maximum Likelihood Estimator (MLE) is intuitive, Stein's paradox famously shows that it is statistically inefficient in high dimensions. To address this, we introduce *STEADY*, an estimator that generalises Stein's paradox by integrating physical knowledge. We derive our estimator from a principled empirical Bayes model where the prior distribution over the equilibria is a direct consequence of the stationary properties of the system's governing differential equations. This leads to a novel adaptive shrinkage mechanism, where the amount of shrinkage applied to each observation is naturally modulated by the physical stability of the measured system. We provide a rigorous frequentist analysis of our estimator, proving that STEADY not only dominates the MLE but is also minimax under certain conditions, offering the strongest possible guarantee of robustness. We validate our claims on synthetic data and demonstrate STEADY's utility on the global Argo ocean float dataset, showing that it effectively filters noise to reveal the "North Atlantic Warming Hole".
 
 ## Quick Usage
 
@@ -35,7 +41,11 @@ print(f"STEADY Estimates: {np.round(mu_hat_steady, 2)}")
 
 This project uses Python 3.11. To set up the environment and install the necessary dependencies, follow these steps:
 
-1.  Download the repository from https://anonymous.4open.science/r/steady-kdd-submission_id-87 and unzip the file to a target folder.
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/shanfenghu/steady.git
+    cd steady
+    ```
 
 2.  **Create and activate a conda environment:**
     ```bash
@@ -49,9 +59,9 @@ This project uses Python 3.11. To set up the environment and install the necessa
     pip install -e .
     ```
 
-## Reproducing Paper Results
+## Reproducing Experimental Results
 
-All figures and tables from the paper can be reproduced by running the scripts in the `experiments/` directory.
+All experimental results can be reproduced by running the scripts in the `experiments/` directory.
 
 ### 1. Data Setup
 
@@ -61,24 +71,24 @@ Before running the real-world experiment, you must download the Argo ocean data.
 
 All experiment scripts can be run from the root directory of the project.
 
-* **Generate the Data Processing Visualization (Appendix Figure):**
+* **Generate the Data Processing Visualization:**
     ```bash
     python experiments/process_argo.py --data_path data/your_argo_file.nc
     ```
     This will also create the `argo_processed_data.csv` file required for the main Argo experiment.
 
-* **Generate Synthetic Experiment Figures:**
+* **Generate Synthetic Experiment Results:**
     ```bash
-    # Figure: Dominance over MLE
+    # Dominance over MLE experiment
     python experiments/exp_dominance.py
 
-    # Figure: Model Correctness Condition
+    # Model Correctness Condition experiment
     python experiments/exp_correctness.py
 
-    # Figure: Robustness to Parameter Misspecification
+    # Robustness to Parameter Misspecification experiment
     python experiments/exp_sensitivity.py
 
-    # Figure: Computational Scalability
+    # Computational Scalability experiment
     python experiments/exp_scalability.py
     ```
 
@@ -97,11 +107,31 @@ The project is organized into a clean, reproducible structure:
 * `steady/`: The core, installable Python package.
     * `estimators.py`: Contains the implementations of the STEADY, GJS, and MLE estimators.
     * `simulation.py`: Contains the function for simulating the Ornstein-Uhlenbeck process.
-* `experiments/`: Scripts to reproduce all paper results.
+* `experiments/`: Scripts to reproduce all experimental results.
     * `process_argo.py`: Preprocesses the raw Argo data and generates the diagnostic visualization.
-    * `exp_argo.py`: Runs the main Argo case study and generates the final maps and table.
+    * `exp_argo.py`: Runs the main Argo case study and generates the results maps and quantitative table.
     * `exp*.py`: Scripts for the four synthetic experiments.
     * `plot_utils.py`: Shared plotting styles and functions for consistent figures.
 * `tests/`: Unit tests for the core library functions.
 * `data/`: Directory for storing the raw and processed data.
 * `pyproject.toml`: The package definition file.
+
+## Citation
+
+If you use STEADY in your research, please cite:
+
+```bibtex
+@inproceedings{hu2026steady,
+  title={Stein-type Estimator Assisted by Dynamics},
+  author={Hu, Shanfeng and Aslam, Nauman},
+  booktitle={Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '26)},
+  year={2026},
+  pages={},
+  doi={10.1145/3770854.3780166},
+  isbn={979-8-4007-2258-5/2026/08}
+}
+```
+
+## Acknowledgments
+
+This work was funded in part by the European Union's Horizon Europe Research and Innovation Programme under the Marie Sklodowska-Curie under Grant 101131117 and UKRI under Grant reference number EP/Z000041/1.

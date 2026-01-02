@@ -9,22 +9,25 @@ from plot_utils import setup_plot_style, STEADY_COLORS, save_figure
 
 def run_experiment(n_trials: int = 100, n_dims_range: list = None):
     """
-    Runs the simulation for Experiment: Verifying Dominance over MLE.
+    Runs the simulation experiment to verify dominance over MLE.
 
-    This experiment calculates the risk (MSE) for the MLE, GJS, and STEADY
-    estimators across a range of dimensions (n).
+    This experiment calculates the risk (mean squared error) for the MLE, GJS, and STEADY
+    estimators across a range of dimensions (n). The risk is computed as the average
+    squared error between the estimates and the true equilibrium values.
 
     Args:
         n_trials (int): The number of independent simulations to run for each
-                        dimension to get a stable average risk.
+                        dimension to get a stable average risk estimate.
         n_dims_range (list, optional): The range of dimensions (n) to test.
                                        Defaults to range(3, 51).
 
     Returns:
         tuple: A tuple containing:
             - n_dims_range (list): The dimensions tested.
-            - mean_risks (dict): A dictionary with the mean risk for each estimator.
-            - std_errors (dict): A dictionary with the standard error of the mean risk.
+            - mean_risks (dict): A dictionary with keys 'mle', 'gjs', 'steady' containing
+                                 the mean risk (MSE) for each estimator.
+            - std_errors (dict): A dictionary with keys 'mle', 'gjs', 'steady' containing
+                                 the standard error of the mean risk for each estimator.
     """
     if n_dims_range is None:
         n_dims_range = list(range(3, 51))
@@ -77,7 +80,16 @@ def run_experiment(n_trials: int = 100, n_dims_range: list = None):
 
 def plot_results(n_dims_range, mean_risks, std_errors):
     """
-    Generates and saves the plot for the experiment.
+    Generates and saves the risk vs. dimension plot for the experiment.
+    
+    Creates a line plot showing how the risk (MSE) of each estimator varies
+    with the number of dimensions, with shaded error bars representing
+    standard errors.
+    
+    Args:
+        n_dims_range (list): The dimensions tested.
+        mean_risks (dict): Dictionary with mean risk for each estimator.
+        std_errors (dict): Dictionary with standard error for each estimator.
     """
     setup_plot_style()
     fig, ax = plt.subplots(figsize=(10, 6))

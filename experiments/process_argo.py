@@ -18,17 +18,31 @@ warnings.filterwarnings("ignore", category=UserWarning, module="xarray")
 
 def load_and_preprocess_argo_data(filepath: str) -> tuple:
     """
-    Loads and preprocesses the Argo dataset, returning intermediate objects
-    for visualization and debugging.
+    Loads and preprocesses the Argo ocean float dataset.
+
+    This function performs the following steps:
+    1. Loads the NetCDF file and filters to North Atlantic region at 10m depth
+    2. Stacks spatial dimensions and filters for points with complete time series
+    3. Calculates monthly temperature anomalies (deviations from climatology)
+    4. Estimates physical parameters (lambda, sigma_ou_sq) for each location
+    5. Computes total observation variances
+    6. Saves processed data to CSV
 
     Args:
         filepath (str): The path to the raw Argo NetCDF data file.
 
     Returns:
         tuple: A tuple containing:
-            - df (pd.DataFrame): The final clean DataFrame.
-            - temp_clean (xr.DataArray): The clean 3D data cube of temperatures.
-            - anomalies (xr.DataArray): The stacked DataArray of anomalies.
+            - df (pd.DataFrame): The final clean DataFrame with columns:
+                - lon, lat: Geographic coordinates
+                - Y: Mean temperature anomaly
+                - lambda_est: Estimated reversion rate
+                - sigma_ou_sq_est: Estimated process noise variance
+                - sigma_i_sq: Total observation variance
+            - temp_clean (xr.DataArray): The clean 3D data cube of temperatures
+                                        (for visualization purposes).
+            - anomalies (xr.DataArray): The stacked DataArray of monthly anomalies
+                                       (for visualization purposes).
     """
     print("--- Starting Data Preprocessing ---")
     ds = xr.open_dataset(filepath, decode_times=True)
@@ -99,7 +113,19 @@ def load_and_preprocess_argo_data(filepath: str) -> tuple:
 
 def visualize_preprocessing(df: pd.DataFrame, temp_clean: xr.DataArray, anomalies: xr.DataArray):
     """
-    Creates a three-panel figure to visually debug the data processing pipeline.
+    Creates a three-panel diagnostic figure for the data processing pipeline.
+
+    The figure shows:
+    - Panel (a): Map of valid float locations with example points highlighted
+    - Panel (b): Raw temperature time series for example points
+    - Panel (c): Calculated monthly anomalies for example points
+
+    This visualization helps verify that the preprocessing steps are working correctly.
+
+    Args:
+        df (pd.DataFrame): The processed DataFrame with float locations.
+        temp_clean (xr.DataArray): The clean temperature data cube.
+        anomalies (xr.DataArray): The monthly anomaly data.
     """
     print("Generating visualization figure...")
     setup_plot_style()
@@ -153,8 +179,8 @@ def visualize_physical_parameters(df: pd.DataFrame):
     Creates a two-panel figure showing the spatial distribution of the
     estimated physical parameters (lambda and sigma_ou_sq).
 
-    This figure is intended for the appendix to provide a deeper insight into
-    the physical properties of the dataset.
+    This visualization provides insight into the physical properties of the dataset,
+    showing how stability and process noise vary spatially across the ocean region.
 
     Args:
         df (pd.DataFrame): The final processed DataFrame containing the
@@ -193,7 +219,7 @@ def visualize_physical_parameters(df: pd.DataFrame):
     save_figure(fig, "argo_physical_parameters_map")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process and visualize Argo data for the STEADY paper.")
+    parser = argparse.ArgumentParser(description="Process and visualize Argo ocean float data.")
     parser.add_argument(
         "--data_path",
         type=str,

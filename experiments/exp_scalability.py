@@ -9,21 +9,24 @@ from plot_utils import setup_plot_style, STEADY_COLORS, save_figure
 
 def run_experiment(n_dims_range: np.ndarray = None, n_repeats: int = 100):
     """
-    Runs the simulation for Experiment: Computational Scalability.
+    Runs the computational scalability experiment.
 
     This experiment measures the wall-clock time to compute the GJS and STEADY
-    estimates for an increasing number of dimensions (n).
+    estimates for an increasing number of dimensions (n). The goal is to verify
+    that both estimators scale efficiently (approximately O(n)) with the problem size.
 
     Args:
         n_dims_range (np.ndarray, optional): The range of dimensions (n) to test.
-                                             Defaults to a log-spaced range.
+                                             Defaults to a log-spaced range from
+                                             100 to 100,000.
         n_repeats (int): The number of times to repeat the estimation for each
-                         dimension to get a stable average time.
+                         dimension to get a stable average time measurement.
 
     Returns:
         tuple: A tuple containing:
             - n_dims_range (np.ndarray): The dimensions tested.
-            - avg_times (dict): A dictionary with the average runtime for GJS and STEADY.
+            - avg_times (dict): A dictionary with keys 'gjs' and 'steady' containing
+                                the average runtime (in seconds) for each estimator.
     """
     if n_dims_range is None:
         # Use a log-spaced range to see the scaling behavior clearly
@@ -69,6 +72,14 @@ def run_experiment(n_dims_range: np.ndarray = None, n_repeats: int = 100):
 def plot_results(n_dims_range, avg_times):
     """
     Generates and saves the log-log scalability plot for the experiment.
+    
+    Creates a log-log plot showing how the runtime of each estimator scales with
+    the number of dimensions. A reference line for ideal O(n) scaling is included
+    for comparison.
+    
+    Args:
+        n_dims_range (np.ndarray): The dimensions tested.
+        avg_times (dict): Dictionary with average runtime for each estimator.
     """
     setup_plot_style()
     fig, ax = plt.subplots(figsize=(10, 6))

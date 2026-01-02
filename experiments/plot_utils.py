@@ -16,6 +16,10 @@ STEADY_COLORS = {
 def setup_plot_style():
     """
     Sets the global matplotlib rcParams for a consistent, professional look.
+    
+    Configures font sizes, styles, and other plotting parameters to ensure
+    all figures have a uniform appearance. This should be called before
+    creating any plots.
     """
     plt.style.use('seaborn-v0_8-whitegrid')
     plt.rcParams.update({

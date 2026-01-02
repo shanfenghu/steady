@@ -9,22 +9,26 @@ from plot_utils import setup_plot_style, STEADY_COLORS, save_figure
 
 def run_experiment_2(n_trials: int = 100, n_dims: int = 20, error_levels: np.ndarray = None):
     """
-    Runs the simulation for Experiment: Verifying the Model Correctness Condition.
+    Runs the simulation experiment to verify the model correctness condition.
 
-    This experiment calculates the risk (MSE) for GJS and STEADY estimators
-    as the physical prior becomes progressively less accurate.
+    This experiment calculates the risk (mean squared error) for GJS and STEADY
+    estimators as the physical prior becomes progressively less accurate. The
+    error level represents the offset between the true mean and the physical prior,
+    allowing us to study how robust STEADY is to prior misspecification.
 
     Args:
         n_trials (int): The number of independent simulations for each error level.
         n_dims (int): The fixed number of dimensions for the simulation.
         error_levels (np.ndarray, optional): The range of misspecification errors
-                                             to test. Defaults to np.linspace(0, 10, 25).
+                                             to test. Defaults to np.linspace(0, 1.5, 25).
 
     Returns:
         tuple: A tuple containing:
             - error_levels (np.ndarray): The misspecification levels tested.
-            - mean_risks (dict): A dictionary with the mean risk for GJS and STEADY.
-            - std_errors (dict): A dictionary with the standard error of the mean risk.
+            - mean_risks (dict): A dictionary with keys 'gjs' and 'steady' containing
+                                 the mean risk (MSE) for each estimator.
+            - std_errors (dict): A dictionary with keys 'gjs' and 'steady' containing
+                                 the standard error of the mean risk for each estimator.
     """
     if error_levels is None:
         error_levels = np.linspace(0, 1.5, 25)
@@ -75,7 +79,16 @@ def run_experiment_2(n_trials: int = 100, n_dims: int = 20, error_levels: np.nda
 
 def plot_results(error_levels, mean_risks, std_errors):
     """
-    Generates and saves the plot for the experiment.
+    Generates and saves the risk vs. prior accuracy plot for the experiment.
+    
+    Creates a line plot showing how the risk (MSE) of each estimator varies
+    with the misspecification error of the physical prior, with shaded error bars.
+    Also annotates the crossover point where GJS becomes better than STEADY.
+    
+    Args:
+        error_levels (np.ndarray): The misspecification levels tested.
+        mean_risks (dict): Dictionary with mean risk for each estimator.
+        std_errors (dict): Dictionary with standard error for each estimator.
     """
     setup_plot_style()
     fig, ax = plt.subplots(figsize=(10, 6))

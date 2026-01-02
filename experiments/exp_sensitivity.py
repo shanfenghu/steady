@@ -15,17 +15,31 @@ def run_experiment_3(
     mu_phys_errors: list = None
 ):
     """
-    Runs a revised, more rigorous simulation for the experiment, testing
-    sensitivity to a systematic bias in the lambda parameter.
+    Runs a sensitivity analysis experiment testing robustness to parameter errors.
+
+    This experiment tests how STEADY performs when both the physical prior (mu_phys)
+    and the stability parameters (lambdas) are misspecified. The lambda_bias_factors
+    represent multiplicative biases applied to the true lambda values, while mu_phys_errors
+    represent offsets from the true mean.
 
     Args:
-        n_trials (int): Number of independent simulations for each setting.
+        n_trials (int): Number of independent simulations for each parameter combination.
         n_dims (int): Fixed number of dimensions for the simulation.
         lambda_bias_factors (np.ndarray, optional): Multiplicative bias factors for lambda.
-        mu_phys_errors (list, optional): Different error levels for the physical prior.
+                                                    Values < 1.0 underestimate stability,
+                                                    values > 1.0 overestimate stability.
+                                                    Defaults to log-spaced values from 0.1 to 10.0.
+        mu_phys_errors (list, optional): Different error levels (offsets) for the physical prior.
+                                         Defaults to [0.2, 0.4, 0.8, 1.2, 1.6].
 
     Returns:
-        tuple: A tuple containing the results for plotting.
+        tuple: A tuple containing:
+            - lambda_bias_factors (np.ndarray): The bias factors tested.
+            - mu_phys_errors (list): The prior error levels tested.
+            - mean_risks_gjs (np.ndarray): Mean risk for GJS (baseline).
+            - std_errors_gjs (np.ndarray): Standard error for GJS.
+            - mean_risks_steady (dict): Dictionary mapping mu_phys_errors to mean risk arrays.
+            - std_errors_steady (dict): Dictionary mapping mu_phys_errors to std error arrays.
     """
     if lambda_bias_factors is None:
         # Test underestimation (0.1) to overestimation (10.0)
@@ -86,7 +100,19 @@ def run_experiment_3(
 
 def plot_results(lambda_bias_factors, mu_phys_errors, mean_risks_gjs, std_errors_gjs, mean_risks_steady, std_errors_steady):
     """
-    Generates and saves the revised plot for the experiment.
+    Generates and saves the sensitivity analysis plot for the experiment.
+    
+    Creates a plot showing how STEADY's risk varies with lambda bias factors for
+    different levels of prior misspecification. GJS is shown as a horizontal baseline
+    since it doesn't depend on lambda or the physical prior.
+    
+    Args:
+        lambda_bias_factors (np.ndarray): The bias factors tested.
+        mu_phys_errors (list): The prior error levels tested.
+        mean_risks_gjs (np.ndarray): Mean risk for GJS.
+        std_errors_gjs (np.ndarray): Standard error for GJS.
+        mean_risks_steady (dict): Dictionary mapping mu_phys_errors to mean risk arrays.
+        std_errors_steady (dict): Dictionary mapping mu_phys_errors to std error arrays.
     """
     setup_plot_style()
     fig, ax = plt.subplots(figsize=(10, 6))

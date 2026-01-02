@@ -18,14 +18,23 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 def calculate_proxy_metrics(df: pd.DataFrame, estimate_col: str) -> dict:
     """
-    Calculates the two proxy metrics for a given set of estimates.
+    Calculates proxy metrics for evaluating the quality of estimates.
+
+    Computes two metrics:
+    1. Spatial variability: Measures how much estimates vary relative to their
+       spatial neighbors (lower is better, indicating smoother estimates).
+    2. Correlation with climatology: Measures correlation with latitude and longitude,
+       which serve as proxies for expected climatological patterns.
 
     Args:
-        df (pd.DataFrame): DataFrame containing float locations and estimates.
+        df (pd.DataFrame): DataFrame containing float locations (lon, lat) and estimates.
         estimate_col (str): The name of the column with the estimates to evaluate.
 
     Returns:
-        dict: A dictionary containing the calculated metrics.
+        dict: A dictionary containing:
+            - 'variability' (float): Spatial variability metric.
+            - 'correlation_lat' (float): Correlation with latitude.
+            - 'correlation_lon' (float): Correlation with longitude.
     """
     # --- 1. Spatial Variability ---
     coords = df[['lon', 'lat']].values
@@ -49,7 +58,16 @@ def calculate_proxy_metrics(df: pd.DataFrame, estimate_col: str) -> dict:
 
 def plot_argo_maps(df: pd.DataFrame, output_filename: str):
     """
-    Generates and saves the side-by-side map comparison figure.
+    Generates and saves a side-by-side map comparison of the three estimators.
+    
+    Creates a three-panel figure showing the spatial distribution of estimates
+    from MLE, GJS, and STEADY on a world map projection. All three panels use
+    the same color scale for fair comparison.
+    
+    Args:
+        df (pd.DataFrame): DataFrame containing float locations and estimates
+                           (est_mle, est_gjs, est_steady columns).
+        output_filename (str): Base filename for saving the figure (without extension).
     """
     setup_plot_style()
     fig = plt.figure(figsize=(24, 7))
@@ -84,7 +102,19 @@ def plot_argo_maps(df: pd.DataFrame, output_filename: str):
 
 def main(processed_data_path: str, n_bootstraps: int = 100):
     """
-    Main function to orchestrate the Argo experiment using pre-processed data.
+    Main function to orchestrate the Argo ocean float case study.
+
+    This function:
+    1. Loads pre-processed Argo data
+    2. Computes estimates using MLE, GJS, and STEADY
+    3. Generates spatial visualization maps
+    4. Performs bootstrap resampling to compute quantitative metrics
+    5. Saves results to CSV files
+
+    Args:
+        processed_data_path (str): Path to the processed Argo CSV data file.
+        n_bootstraps (int): Number of bootstrap resamples for computing metrics.
+                           Defaults to 100.
     """
     print(f"Loading processed data from '{processed_data_path}'...")
     try:
@@ -180,7 +210,7 @@ def main(processed_data_path: str, n_bootstraps: int = 100):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run the Argo real-world case study for the STEADY paper.")
+    parser = argparse.ArgumentParser(description="Run the Argo real-world case study.")
     parser.add_argument(
         "--processed_data_path",
         type=str,
